@@ -8,7 +8,7 @@ mysql = MySQL()
 app = Flask(__name__)
 CORS(app)
 app.config['MYSQL_DATABASE_USER'] = 'tpartner'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'coletividade!@#'
+app.config['MYSQL_DATABASE_PASSWORD'] = ''
 app.config['MYSQL_DATABASE_DB'] = 't-partner_survey-heavyweight'
 app.config['MYSQL_DATABASE_HOST'] = 'surveys.nees.com.br'
 
