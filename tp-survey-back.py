@@ -110,6 +110,50 @@ def updateProfile():
     finally:
         pass
 
+@app.route("/questions", methods = ['POST'])
+def savequestions():
+    try:
+        cur = connectDatabase();
+        json = getResponse(request)
+        print json
+        answers = json['data']
+        user_id = json['userId']
+        step = json['step']
+        index = 1
+        for answer in answers:
+            answer = t(answer)
+            query = "INSERT INTO answers (text,question_id,user_id,step) VALUES ('"+str(answer)+"','"+str(index)+"','"+user_id+"','"+step+"');"
+            print (query)
+            cur.execute(query)
+            index += 1
+        return str(cur.lastrowid)
+    except Exception, e:
+        raise e
+        return e
+    
+
+@app.route("/questions", methods = ['PUT'])
+def updatequestions():
+    try:
+        cur = connectDatabase();
+        json = getResponse(request)
+        print json
+        answers = json['data']
+        user_id = json['userId']
+        step = json['step']
+        index = 1
+        for answer in answers:
+            answer = t(answer)
+            query = "UPDATE answers SET text = '"+str(answer)+"'  WHERE question_id = '"+str(index)+"'AND user_id= '"+str(user_id)+"' AND step = '"+step+"'"
+            print (query)
+            cur.execute(query)
+            index += 1
+        return json['id']
+    except Exception, e:
+        raise e
+        return e
+    return null
+
 @app.route("/saveSteps", methods = ['POST'])
 def saveStep():
     try:
