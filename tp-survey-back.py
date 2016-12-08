@@ -154,6 +154,39 @@ def updatequestions():
         return e
     return null
 
+@app.route("/step", methods = ['POST'])
+def createstep():
+    try:
+        cur = connectDatabase();
+        json = getResponse(request)
+        print json
+        ui = str(json['userId'])
+        st = str(json['index'])
+        sd = str(json['data'])
+        query = "INSERT INTO steps_system (user_id,step,step_response) VALUES (%s,%s,%s);"
+        print (query) % (ui,st,sd)
+        cur.execute(query,(ui,st,sd))
+        return str(cur.lastrowid)
+    except Exception, e:
+        raise e
+        return e
+@app.route("/step", methods = ['PUT'])
+def updatestep():
+    try:
+        cur = connectDatabase();
+        json = getResponse(request)
+        print json
+        ui = str(json['userId'])
+        st = str(json['index'])
+        sd = str(json['data'])
+        query = "UPDATE steps_system SET step_response = %s WHERE user_id = %s AND step = %s"
+        print (query) % (ui,st,sd)
+        cur.execute(query,(ui,st,sd))
+        return str(json['id'])
+    except Exception, e:
+        raise e
+        return e
+
 @app.route("/saveSteps", methods = ['POST'])
 def saveStep():
     try:
