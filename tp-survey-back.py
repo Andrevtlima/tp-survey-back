@@ -37,21 +37,7 @@ def getResponse(request):
     finally:
         pass
 
-@app.after_request
-def after_request(response):
-  response.headers.add('Access-Control-Allow-Origin', '*')
-  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-  return response
-
-@app.route("/profile",methods = ['POST'])
-def createProfile():
-    cur = connectDatabase();
-    json = getResponse(request)
-    print json
-    try:
-        user = json['data']
-        user_nationality = t(user['nationality'])
+def normalizeUser(user):
         if 'education_level' not in user:
             user['education_level'] = ''
         if 'howLong' not in user:
@@ -71,6 +57,25 @@ def createProfile():
         if 'able_use_technology' not in user:
             user['able_use_technology'] = ''
 
+        return user
+
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+  return response
+
+@app.route("/profile",methods = ['POST'])
+def createProfile():
+    cur = connectDatabase();
+    json = getResponse(request)
+    print json
+    try:
+        user = json['data']
+        user_nationality = t(user['nationality'])
+        user = normalizeUser(user);
+        
         query = "INSERT INTO users (gender,age,occupation,education_degree,nationality,language,agree_terms,system,how_long_work,employment_status,use_technology,computer_skills,formal_training,able_use) VALUES ('"+user['gender']+"','"+str(user['age'])+"','"+user['occupation']+"','"+user['education_level']+"','"+user_nationality+"','"+user['language']+"','"+str(user['agree_terms'])+"','"+user['system']+"','"+user['how_long_work']+"','"+user['employment_status']+"','"+user['use_technology']+"','"+user['skills']+"','"+user['trained']+"','"+user['able_use_technology']+"');"
         print (query)
         cur.execute(query)
@@ -87,8 +92,23 @@ def createProfile():
 
 @app.route("/profile",methods = ['PUT'])
 def updateProfile():
-    print 'updateProfile'
-    return '200'
+    cur = connectDatabase();
+    json = getResponse(request)
+    print json
+    try:
+        user = json['data']
+        user_nationality = t(user['nationality'])
+        user = normalizeUser(user);
+        user_id = json['id']
+        query = "UPDATE users SET gender = '"+user['gender']+"',age = '"+str(user['age'])+"' ,occupation = '"+user['occupation']+"',education_degree = '"+user['education_level']+"',nationality = '"+user_nationality+"',language = '"+user['language']+"',agree_terms = '"+str(user['agree_terms'])+"',system = '"+user['system']+"',how_long_work = '"+user['how_long_work']+"',employment_status = '"+user['employment_status']+"',use_technology = '"+user['use_technology']+"',computer_skills = '"+user['skills']+"',formal_training = '"+user['trained']+"',able_use = '"+user['able_use_technology']+"' WHERE id="+user_id+";"
+        print (query)
+        cur.execute(query)
+        return user_id
+    except Exception, e:
+        print e,'\nFail on trying to update user to database.'
+        return e
+    finally:
+        pass
 
 @app.route("/saveSteps", methods = ['POST'])
 def saveStep():
