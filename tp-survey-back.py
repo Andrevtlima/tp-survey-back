@@ -8,11 +8,34 @@ mysql = MySQL()
 app = Flask(__name__)
 CORS(app)
 app.config['MYSQL_DATABASE_USER'] = 'tpartner'
-app.config['MYSQL_DATABASE_PASSWORD'] = ''
+app.config['MYSQL_DATABASE_PASSWORD'] = 'coletividade!@#'
 app.config['MYSQL_DATABASE_DB'] = 't-partner_survey-heavyweight'
 app.config['MYSQL_DATABASE_HOST'] = 'surveys.nees.com.br'
 
 mysql.init_app(app)
+
+def connectDatabase():
+    try:
+        conn = mysql.connect()
+        cur = conn.cursor()
+        return cur
+    except Exception, e:
+        print e,'\nFail on trying to connect to database.'
+        return e
+    finally:
+        pass
+
+    
+    
+def getResponse(request):
+    try:
+        json = request.json
+        return json
+    except Exception, e:
+        print e,'\nFail on trying to get JSON data.'
+        return e
+    finally:
+        pass
 
 @app.after_request
 def after_request(response):
@@ -20,6 +43,52 @@ def after_request(response):
   response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
   response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
   return response
+
+@app.route("/profile",methods = ['POST'])
+def createProfile():
+    cur = connectDatabase();
+    json = getResponse(request)
+    print json
+    try:
+        user = json['data']
+        user_nationality = t(user['nationality'])
+        if 'education_level' not in user:
+            user['education_level'] = ''
+        if 'howLong' not in user:
+            user['howLong'] = ''
+        if 'how_long_work' not in user:
+            user['how_long_work'] = ''
+        if 'employmentStatus_other' not in user:
+            user['employmentStatus_other'] = ''
+        if 'employment_status' not in user:
+            user['employment_status'] = ''
+        if 'use_technology' not in user:
+            user['use_technology'] = ''
+        if 'skills' not in user:
+            user['skills'] = ''
+        if 'trained' not in user:
+            user['trained'] = ''
+        if 'able_use_technology' not in user:
+            user['able_use_technology'] = ''
+
+        query = "INSERT INTO users (gender,age,occupation,education_degree,nationality,language,agree_terms,system,how_long_work,employment_status,use_technology,computer_skills,formal_training,able_use) VALUES ('"+user['gender']+"','"+str(user['age'])+"','"+user['occupation']+"','"+user['education_level']+"','"+user_nationality+"','"+user['language']+"','"+str(user['agree_terms'])+"','"+user['system']+"','"+user['how_long_work']+"','"+user['employment_status']+"','"+user['use_technology']+"','"+user['skills']+"','"+user['trained']+"','"+user['able_use_technology']+"');"
+        print (query)
+        cur.execute(query)
+        user_id = str(cur.lastrowid)
+        return user_id
+    except Exception, e:
+        print e,'\nFail on trying to insert user to database.'
+        return e
+    finally:
+            pass
+
+    print 'createProfile'
+    return user_id
+
+@app.route("/profile",methods = ['PUT'])
+def updateProfile():
+    print 'updateProfile'
+    return '200'
 
 @app.route("/saveSteps", methods = ['POST'])
 def saveStep():
