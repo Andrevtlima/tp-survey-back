@@ -17,8 +17,8 @@ mysql.init_app(app)
 def connectDatabase():
     try:
         conn = mysql.connect()
-        cur = conn.cursor()
-        return cur
+        
+        return conn
     except Exception, e:
         print e,'\nFail on trying to connect to database.'
         return e
@@ -26,7 +26,7 @@ def connectDatabase():
         pass
 
     
-def commit():
+def commit(conn):
      try:
         conn.commit()
     except Exception, e:
@@ -92,7 +92,8 @@ def after_request(response):
 
 @app.route("/profile",methods = ['POST'])
 def createProfile():
-    cur = connectDatabase();
+    conn = connectDatabase()
+    cur = conn.cursor()
     json = getResponse(request)
    
     try:
@@ -106,7 +107,7 @@ def createProfile():
         user_id = str(cur.lastrowid)
         time = json['time'] 
         savetime(cur,time,'profile',user_id)
-        commit()
+        commit(conn)
         return user_id
     except Exception, e:
         print e,'\nFail on trying to insert user to database.'
