@@ -26,7 +26,15 @@ def connectDatabase():
         pass
 
     
-    
+def commit():
+     try:
+        conn.commit()
+    except Exception, e:
+        print e,'\nFail on trying to commit to database.'
+        return e
+    finally:
+        pass
+
 def getResponse(request):
     try:
         json = request.json
@@ -93,11 +101,12 @@ def createProfile():
         user = normalizeUser(user);
         
         query = "INSERT INTO users (gender,age,occupation,education_degree,nationality,language,agree_terms,system,how_long_work,employment_status,use_technology,computer_skills,formal_training,able_use) VALUES ('"+user['gender']+"','"+str(user['age'])+"','"+user['occupation']+"','"+user['education_level']+"','"+user_nationality+"','"+user['language']+"','"+str(user['agree_terms'])+"','"+user['system']+"','"+user['how_long_work']+"','"+user['employment_status']+"','"+user['use_technology']+"','"+user['skills']+"','"+user['trained']+"','"+user['able_use_technology']+"');"
-      
+        print query
         cur.execute(query)
         user_id = str(cur.lastrowid)
-        time = json['time']
+        time = json['time'] 
         savetime(cur,time,'profile',user_id)
+        commit()
         return user_id
     except Exception, e:
         print e,'\nFail on trying to insert user to database.'
@@ -349,4 +358,4 @@ def is_ascii(s):
     return all(ord(c) < 128 for c in s)
 
 if __name__ == "__main__":
-        app.run(host='::',port=5002,debug=True)
+        app.run(host='::',port=5034,debug=True)
