@@ -153,8 +153,7 @@ def savequestions():
         user_id = json['userId']
         step = json['step']
         index = 1
-        for answer in answers:
-            answer = t(answer)
+        for answer in answers:            
             query = "INSERT INTO answers (text,question_id,user_id,step) VALUES ('"+str(answer)+"','"+str(index)+"','"+user_id+"','"+step+"');"
             
             cur.execute(query)
@@ -225,7 +224,7 @@ def updatestep():
         st = str(json['index'])
         sd = str(json['data'])
         query = "UPDATE steps_system SET step_response = %s WHERE user_id = %s AND step = %s"
-       
+        print query
         cur.execute(query,(ui,st,sd))
         time = json['time'] 
         updateTime(cur,time,str(st),ui)
