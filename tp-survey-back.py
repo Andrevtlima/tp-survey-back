@@ -55,7 +55,7 @@ def savetime(cur,time,id_tela,user_id):
 
 def updateTime(cur,time,id_tela,user_id):
     try:
-        query = "UPDATE logs time = %s WHERE (user_id = %s AND page = %s)"
+        query = "UPDATE logs time = %s WHERE user_id = %s AND page = %s"
         cur.execute(query,(time,user_id,id_tela))
 
     except Exception, e:
