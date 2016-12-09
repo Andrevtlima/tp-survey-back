@@ -27,7 +27,7 @@ def connectDatabase():
 
     
 def commit(conn):
-     try:
+    try:
         conn.commit()
     except Exception, e:
         print e,'\nFail on trying to commit to database.'
