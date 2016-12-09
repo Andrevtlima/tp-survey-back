@@ -225,7 +225,7 @@ def updatestep():
         sd = str(json['data'])
         query = "UPDATE steps_system SET step_response = %s WHERE user_id = %s AND step = %s"
         print query
-        cur.execute(query,(ui,st,sd))
+        cur.execute(query,(sd,ui,st))
         time = json['time'] 
         updateTime(cur,time,str(st),ui)
         commit(conn)
