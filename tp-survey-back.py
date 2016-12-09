@@ -62,8 +62,8 @@ def updateTime(cur,time,id_tela,user_id):
         print e
     
 def normalizeUser(user):
-        if 'education_level' not in user:
-            user['education_level'] = ''
+        if 'highestLevel' not in user:
+            user['highestLevel'] = ''
         if 'howLong' not in user:
             user['howLong'] = ''
         if 'how_long_work' not in user:
@@ -76,10 +76,10 @@ def normalizeUser(user):
             user['use_technology'] = ''
         if 'skills' not in user:
             user['skills'] = ''
-        if 'trained' not in user:
-            user['trained'] = ''
-        if 'able_use_technology' not in user:
-            user['able_use_technology'] = ''
+        if 'profileTreinament' not in user:
+            user['profileTreinament'] = ''
+        if 'ableuseTechnology' not in user:
+            user['ableuseTechnology'] = ''
 
         return user
 
@@ -101,7 +101,7 @@ def createProfile():
         user_nationality = t(user['nationality'])
         user = normalizeUser(user);
         
-        query = "INSERT INTO users (gender,age,occupation,education_degree,nationality,language,agree_terms,system,how_long_work,employment_status,use_technology,computer_skills,formal_training,able_use) VALUES ('"+user['gender']+"','"+str(user['age'])+"','"+user['occupation']+"','"+user['education_level']+"','"+user_nationality+"','"+user['language']+"','"+str(user['agree_terms'])+"','"+user['system']+"','"+user['how_long_work']+"','"+user['employment_status']+"','"+user['use_technology']+"','"+user['skills']+"','"+user['trained']+"','"+user['able_use_technology']+"');"
+        query = "INSERT INTO users (gender,age,occupation,education_degree,nationality,language,agree_terms,system,how_long_work,employment_status,use_technology,computer_skills,formal_training,able_use) VALUES ('"+user['gender']+"','"+str(user['age'])+"','"+user['occupation']+"','"+user['highestLevel']+"','"+user_nationality+"','"+user['language']+"','"+str(user['agree_terms'])+"','"+user['system']+"','"+user['how_long_work']+"','"+user['employment_status']+"','"+user['use_technology']+"','"+user['skills']+"','"+user['profileTreinament']+"','"+user['ableuseTechnology']+"');"
         print query
         cur.execute(query)
         user_id = str(cur.lastrowid)
