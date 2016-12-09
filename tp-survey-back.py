@@ -53,7 +53,7 @@ def savetime(cur,time,id_tela,user_id):
     except Exception, e:
         print e
 
-def update(cur,time,id_tela,user_id):
+def updateTime(cur,time,id_tela,user_id):
     try:
         query = "UPDATE logs time = %s WHERE (user_id = %s AND page = %s)"
         cur.execute(query,(time,user_id,id_tela))
@@ -120,7 +120,8 @@ def createProfile():
 
 @app.route("/profile",methods = ['PUT'])
 def updateProfile():
-    cur = connectDatabase();
+    conn = connectDatabase()
+    cur = conn.cursor()
     json = getResponse(request)
   
     try:
@@ -132,7 +133,7 @@ def updateProfile():
         query = "UPDATE users SET gender = '"+user['gender']+"',age = '"+str(user['age'])+"' ,occupation = '"+user['occupation']+"',education_degree = '"+user['education_level']+"',nationality = '"+user_nationality+"',language = '"+user['language']+"',agree_terms = '"+str(user['agree_terms'])+"',system = '"+user['system']+"',how_long_work = '"+user['how_long_work']+"',employment_status = '"+user['employment_status']+"',use_technology = '"+user['use_technology']+"',computer_skills = '"+user['skills']+"',formal_training = '"+user['trained']+"',able_use = '"+user['able_use_technology']+"' WHERE id="+user_id+";"
        
         cur.execute(query)
-        update(cur,time,'profile',user_id)
+        updateTime(cur,time,'profile',user_id)
         return user_id
     except Exception, e:
         print e,'\nFail on trying to update user to database.'
@@ -143,7 +144,8 @@ def updateProfile():
 @app.route("/questions", methods = ['POST'])
 def savequestions():
     try:
-        cur = connectDatabase();
+        conn = connectDatabase()
+        cur = conn.cursor()
         json = getResponse(request)
       
         answers = json['data']
@@ -156,6 +158,8 @@ def savequestions():
             
             cur.execute(query)
             index += 1
+        time = json['time'] 
+        savetime(cur,time,"questions"+str(step),user_id)
         return str(cur.lastrowid)
     except Exception, e:
         raise e
@@ -165,7 +169,8 @@ def savequestions():
 @app.route("/questions", methods = ['PUT'])
 def updatequestions():
     try:
-        cur = connectDatabase();
+        conn = connectDatabase()
+        cur = conn.cursor()
         json = getResponse(request)
        
         answers = json['data']
@@ -178,6 +183,8 @@ def updatequestions():
             
             cur.execute(query)
             index += 1
+        time = json['time'] 
+        updateTime(cur,time,"questions"+str(step),user_id)
         return json['id']
     except Exception, e:
         raise e
@@ -187,7 +194,8 @@ def updatequestions():
 @app.route("/step", methods = ['POST'])
 def createstep():
     try:
-        cur = connectDatabase();
+        conn = connectDatabase()
+        cur = conn.cursor()
         json = getResponse(request)
         
         ui = str(json['userId'])
@@ -196,6 +204,8 @@ def createstep():
         query = "INSERT INTO steps_system (user_id,step,step_response) VALUES (%s,%s,%s);"
         
         cur.execute(query,(ui,st,sd))
+        time = json['time'] 
+        savetime(cur,time,str(st),ui)
         return str(cur.lastrowid)
     except Exception, e:
         raise e
@@ -203,7 +213,8 @@ def createstep():
 @app.route("/step", methods = ['PUT'])
 def updatestep():
     try:
-        cur = connectDatabase();
+        conn = connectDatabase()
+        cur = conn.cursor()
         json = getResponse(request)
        
         ui = str(json['userId'])
@@ -212,6 +223,8 @@ def updatestep():
         query = "UPDATE steps_system SET step_response = %s WHERE user_id = %s AND step = %s"
        
         cur.execute(query,(ui,st,sd))
+        time = json['time'] 
+        updateTime(cur,time,str(st),ui)
         return str(json['id'])
     except Exception, e:
         raise e
