@@ -37,6 +37,22 @@ def getResponse(request):
     finally:
         pass
 
+def savetime(cur,time,id_tela,user_id):
+    try:
+        query = "INSERT INTO logs (user_id,page,time) VALUES (%s,%s,%s)"
+        cur.execute(query,(user_id,id_tela,time))
+
+    except Exception, e:
+        print e
+
+def update(cur,time,id_tela,user_id):
+    try:
+        query = "UPDATE logs time = %s WHERE (user_id = %s AND page = %s)"
+        cur.execute(query,(time,user_id,id_tela))
+
+    except Exception, e:
+        print e
+    
 def normalizeUser(user):
         if 'education_level' not in user:
             user['education_level'] = ''
@@ -70,16 +86,18 @@ def after_request(response):
 def createProfile():
     cur = connectDatabase();
     json = getResponse(request)
-    print json
+   
     try:
         user = json['data']
         user_nationality = t(user['nationality'])
         user = normalizeUser(user);
         
         query = "INSERT INTO users (gender,age,occupation,education_degree,nationality,language,agree_terms,system,how_long_work,employment_status,use_technology,computer_skills,formal_training,able_use) VALUES ('"+user['gender']+"','"+str(user['age'])+"','"+user['occupation']+"','"+user['education_level']+"','"+user_nationality+"','"+user['language']+"','"+str(user['agree_terms'])+"','"+user['system']+"','"+user['how_long_work']+"','"+user['employment_status']+"','"+user['use_technology']+"','"+user['skills']+"','"+user['trained']+"','"+user['able_use_technology']+"');"
-        print (query)
+      
         cur.execute(query)
         user_id = str(cur.lastrowid)
+        time = json['time']
+        savetime(cur,time,'profile',user_id)
         return user_id
     except Exception, e:
         print e,'\nFail on trying to insert user to database.'
@@ -87,22 +105,24 @@ def createProfile():
     finally:
             pass
 
-    print 'createProfile'
+   
     return user_id
 
 @app.route("/profile",methods = ['PUT'])
 def updateProfile():
     cur = connectDatabase();
     json = getResponse(request)
-    print json
+  
     try:
         user = json['data']
         user_nationality = t(user['nationality'])
         user = normalizeUser(user);
         user_id = json['id']
+        time = json['time']
         query = "UPDATE users SET gender = '"+user['gender']+"',age = '"+str(user['age'])+"' ,occupation = '"+user['occupation']+"',education_degree = '"+user['education_level']+"',nationality = '"+user_nationality+"',language = '"+user['language']+"',agree_terms = '"+str(user['agree_terms'])+"',system = '"+user['system']+"',how_long_work = '"+user['how_long_work']+"',employment_status = '"+user['employment_status']+"',use_technology = '"+user['use_technology']+"',computer_skills = '"+user['skills']+"',formal_training = '"+user['trained']+"',able_use = '"+user['able_use_technology']+"' WHERE id="+user_id+";"
-        print (query)
+       
         cur.execute(query)
+        update(cur,time,'profile',user_id)
         return user_id
     except Exception, e:
         print e,'\nFail on trying to update user to database.'
@@ -115,7 +135,7 @@ def savequestions():
     try:
         cur = connectDatabase();
         json = getResponse(request)
-        print json
+      
         answers = json['data']
         user_id = json['userId']
         step = json['step']
@@ -123,7 +143,7 @@ def savequestions():
         for answer in answers:
             answer = t(answer)
             query = "INSERT INTO answers (text,question_id,user_id,step) VALUES ('"+str(answer)+"','"+str(index)+"','"+user_id+"','"+step+"');"
-            print (query)
+            
             cur.execute(query)
             index += 1
         return str(cur.lastrowid)
@@ -137,7 +157,7 @@ def updatequestions():
     try:
         cur = connectDatabase();
         json = getResponse(request)
-        print json
+       
         answers = json['data']
         user_id = json['userId']
         step = json['step']
@@ -145,7 +165,7 @@ def updatequestions():
         for answer in answers:
             answer = t(answer)
             query = "UPDATE answers SET text = '"+str(answer)+"'  WHERE question_id = '"+str(index)+"'AND user_id= '"+str(user_id)+"' AND step = '"+step+"'"
-            print (query)
+            
             cur.execute(query)
             index += 1
         return json['id']
@@ -159,12 +179,12 @@ def createstep():
     try:
         cur = connectDatabase();
         json = getResponse(request)
-        print json
+        
         ui = str(json['userId'])
         st = str(json['index'])
         sd = str(json['data'])
         query = "INSERT INTO steps_system (user_id,step,step_response) VALUES (%s,%s,%s);"
-        print (query) % (ui,st,sd)
+        
         cur.execute(query,(ui,st,sd))
         return str(cur.lastrowid)
     except Exception, e:
@@ -175,12 +195,12 @@ def updatestep():
     try:
         cur = connectDatabase();
         json = getResponse(request)
-        print json
+       
         ui = str(json['userId'])
         st = str(json['index'])
         sd = str(json['data'])
         query = "UPDATE steps_system SET step_response = %s WHERE user_id = %s AND step = %s"
-        print (query) % (ui,st,sd)
+       
         cur.execute(query,(ui,st,sd))
         return str(json['id'])
     except Exception, e:
