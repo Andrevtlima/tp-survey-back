@@ -134,6 +134,7 @@ def updateProfile():
        
         cur.execute(query)
         updateTime(cur,time,'profile',user_id)
+        commit(conn)
         return user_id
     except Exception, e:
         print e,'\nFail on trying to update user to database.'
@@ -160,6 +161,7 @@ def savequestions():
             index += 1
         time = json['time'] 
         savetime(cur,time,"questions"+str(step),user_id)
+        commit(conn)
         return str(cur.lastrowid)
     except Exception, e:
         raise e
@@ -185,6 +187,7 @@ def updatequestions():
             index += 1
         time = json['time'] 
         updateTime(cur,time,"questions"+str(step),user_id)
+        commit(conn)
         return json['id']
     except Exception, e:
         raise e
@@ -206,6 +209,7 @@ def createstep():
         cur.execute(query,(ui,st,sd))
         time = json['time'] 
         savetime(cur,time,str(st),ui)
+        commit(conn)
         return str(cur.lastrowid)
     except Exception, e:
         raise e
@@ -225,6 +229,7 @@ def updatestep():
         cur.execute(query,(ui,st,sd))
         time = json['time'] 
         updateTime(cur,time,str(st),ui)
+        commit(conn)
         return str(json['id'])
     except Exception, e:
         raise e
