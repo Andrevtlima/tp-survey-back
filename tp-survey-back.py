@@ -66,14 +66,14 @@ def normalizeUser(user):
             user['highestLevel'] = ''
         if 'howLong' not in user:
             user['howLong'] = ''
-        if 'how_long_work' not in user:
+        if 'howLong' not in user:
             user['how_long_work'] = ''
-        if 'employmentStatus_other' not in user:
-            user['employmentStatus_other'] = ''
-        if 'employment_status' not in user:
-            user['employment_status'] = ''
-        if 'use_technology' not in user:
-            user['use_technology'] = ''
+        if 'employmentStatus_Other' not in user:
+            user['employmentStatus_Other'] = ''
+        if 'employmentStatus' not in user:
+            user['employmentStatus'] = ''
+        if 'useTechnology' not in user:
+            user['useTechnology'] = ''
         if 'skills' not in user:
             user['skills'] = ''
         if 'profileTreinament' not in user:
@@ -101,7 +101,7 @@ def createProfile():
         user_nationality = t(user['nationality'])
         user = normalizeUser(user);
         
-        query = "INSERT INTO users (gender,age,occupation,education_degree,nationality,language,agree_terms,system,how_long_work,employment_status,use_technology,computer_skills,formal_training,able_use) VALUES ('"+user['gender']+"','"+str(user['age'])+"','"+user['occupation']+"','"+user['highestLevel']+"','"+user_nationality+"','"+user['language']+"','"+str(user['agree_terms'])+"','"+user['system']+"','"+user['how_long_work']+"','"+user['employment_status']+"','"+user['use_technology']+"','"+user['skills']+"','"+user['profileTreinament']+"','"+user['ableuseTechnology']+"');"
+        query = "INSERT INTO users (gender,age,occupation,education_degree,nationality,language,agree_terms,system,how_long_work,employment_status,use_technology,computer_skills,formal_training,able_use) VALUES ('"+user['gender']+"','"+str(user['age'])+"','"+user['occupation']+"','"+user['highestLevel']+"','"+user_nationality+"','"+user['language']+"','"+str(user['agree_terms'])+"','"+user['system']+"','"+user['how_long_work']+"','"+user['use_technology']+"','"+user['skills']+"','"+user['profileTreinament']+"','"+user['ableuseTechnology']+"');"
         print query
         cur.execute(query)
         user_id = str(cur.lastrowid)
@@ -130,7 +130,7 @@ def updateProfile():
         user = normalizeUser(user);
         user_id = json['id']
         time = json['time']
-        query = "UPDATE users SET gender = '"+user['gender']+"',age = '"+str(user['age'])+"' ,occupation = '"+user['occupation']+"',education_degree = '"+user['education_level']+"',nationality = '"+user_nationality+"',language = '"+user['language']+"',agree_terms = '"+str(user['agree_terms'])+"',system = '"+user['system']+"',how_long_work = '"+user['how_long_work']+"',employment_status = '"+user['employment_status']+"',use_technology = '"+user['use_technology']+"',computer_skills = '"+user['skills']+"',formal_training = '"+user['trained']+"',able_use = '"+user['able_use_technology']+"' WHERE id="+user_id+";"
+        query = "UPDATE users SET gender = '"+user['gender']+"',age = '"+str(user['age'])+"' ,occupation = '"+user['occupation']+"',education_degree = '"+user['education_level']+"',nationality = '"+user_nationality+"',language = '"+user['language']+"',agree_terms = '"+str(user['agree_terms'])+"',system = '"+user['system']+"',how_long_work = '"+user['how_long_work']+"',employment_status = '"+user['employment_status']+"',employment_status = '"+user['employment_status']+"',use_technology = '"+user['use_technology']+"',computer_skills = '"+user['skills']+"',formal_training = '"+user['trained']+"',able_use = '"+user['able_use_technology']+"' WHERE id="+user_id+";"
        
         cur.execute(query)
         updateTime(cur,time,'profile',user_id)
